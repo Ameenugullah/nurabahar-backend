@@ -1,40 +1,73 @@
-# Nura Bahar — PocketBase Backend
+# Nura Bahar — PocketBase Backend (Railway)
 
-## Deploy to Railway (Free)
+## Deploy to Railway
 
-1. Go to https://railway.app and sign up with GitHub
-2. Click **New Project → Deploy from GitHub Repo**
-3. Select this backend folder/repo
+### Step 1 — Push this folder to GitHub
+Create a new GitHub repo called `nurabahar-backend`.
+Push the contents of this folder (Dockerfile, railway.toml, README.md).
+
+```bash
+git init
+git add .
+git commit -m "initial backend setup"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/nurabahar-backend.git
+git push -u origin main
+```
+
+### Step 2 — Create Railway project
+1. Go to https://railway.app
+2. Click **New Project → Deploy from GitHub repo**
+3. Select `nurabahar-backend`
 4. Railway detects the Dockerfile and builds automatically
-5. Go to your service → **Settings → Networking → Generate Domain**
-6. Copy your live URL e.g. `https://nurabahar-backend.up.railway.app`
-7. Paste that URL into your frontend `src/lib/pocketbase.js`
 
-## First-time PocketBase Setup
+### Step 3 — Generate a public domain
+1. Click your service in Railway
+2. Go to **Settings → Networking → Generate Domain**
+3. Copy the URL — it looks like:
+   ```
+   https://nurabahar-backend-production.up.railway.app
+   ```
 
-After Railway deploys, visit:
+### Step 4 — Add Railway Volume (for persistent data)
+1. In Railway, click **New** → **Volume**
+2. Attach it to your PocketBase service
+3. Set the mount path to `/pb_data`
+
+This ensures your database survives redeploys.
+
+### Step 5 — First-time PocketBase setup
+Visit your Railway URL + `/_/`:
 ```
-https://your-railway-url.up.railway.app/_/
+https://nurabahar-backend-production.up.railway.app/_/
 ```
-Create your admin account there.
+Create your admin account and set up collections (see SETUP.md).
+
+---
 
 ## Collections to Create
+
+### users (Auth type)
+| Field | Type | Notes |
+|-------|------|-------|
+| name  | Text | User's display name |
 
 ### products
 | Field         | Type   | Required |
 |---------------|--------|----------|
-| name          | Text   | Yes      |
-| category      | Text   | Yes      |
-| price         | Number | Yes      |
-| originalPrice | Number | No       |
-| description   | Text   | Yes      |
-| colors        | JSON   | No       |
-| sizes         | JSON   | No       |
+| name          | Text   | Yes |
+| category      | Text   | Yes |
+| gender        | Text   | No — men/women |
+| price         | Number | Yes |
+| originalPrice | Number | No |
+| description   | Text   | Yes |
+| colors        | JSON   | No |
+| sizes         | JSON   | No |
 | images        | File   | No (multiple) |
-| badge         | Text   | No       |
-| featured      | Bool   | No       |
-| rating        | Number | No       |
-| stock         | Number | No       |
+| badge         | Text   | No |
+| featured      | Bool   | No |
+| rating        | Number | No |
+| stock         | Number | No |
 
 ### orders
 | Field        | Type   |
@@ -51,19 +84,13 @@ Create your admin account there.
 | total        | Number |
 | status       | Text   |
 
-### reviews
-| Field   | Type              |
-|---------|-------------------|
-| product | Relation→products |
-| name    | Text              |
-| rating  | Number            |
-| comment | Text              |
+---
 
 ## Local Development
 
 ```bash
-# Download pocketbase binary from https://pocketbase.io/docs
+# Download PocketBase binary from https://pocketbase.io
 chmod +x pocketbase
 ./pocketbase serve
-# Runs at http://127.0.0.1:8090
+# Admin UI: http://127.0.0.1:8090/_/
 ```
